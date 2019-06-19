@@ -1,10 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import Board from './components/Board';
 
 function App() {
-  useEffect(() => {
-    fetch('/api/generate-path');
-  }, []);
-  return <div className="App">Thimble game</div>;
+  return <Board />;
 }
 
 export default App;
