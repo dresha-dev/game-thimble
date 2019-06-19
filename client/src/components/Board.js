@@ -21,7 +21,7 @@ const Ball = ({ position }) => (
       transition: `all ${DEFAULT_SPEED}ms ease 0s`
     }}
   >
-    <img style={{ width: '100%' }} src="../ball.png" alt="ball" />
+    <img style={{ width: '100%' }} src="../images/ball.png" alt="ball" />
   </div>
 );
 
@@ -79,28 +79,41 @@ const Board = () => {
     setBallPosition(BallPosition);
   }, []);
 
-  const draw = useCallback((path, callback) => {
-    const [first, second] = path.shift();
+  const draw = useCallback(
+    (path, callback) => {
+      const [first, second] = path.shift();
 
-    getNextPositions(first, second);
+      getNextPositions(first, second);
 
-    if (path.length > 0) {
-      setTimeout(() => {
-        draw(path, callback);
-      }, speed);
+      if (path.length > 0) {
+        setTimeout(() => {
+          draw(path, callback);
+        }, speed);
+      } else {
+        callback();
+      }
+    },
+    [getNextPositions, speed]
+  );
+
+  const handleThimbleClick = selectedThimble => {
+    if (selectedThimble === BALL_WINNING_POSITION) {
+      // You won!!!
     } else {
-      callback();
+      // You lose!!!
     }
-  }, []);
+  };
 
   return (
     <div>
       <button onClick={startGame}>Play!!!</button>
+      <button onClick={startGame}>Play again!!!</button>
 
       <div style={{ position: 'relative' }}>
         {getOrderedArray(NUMBER_OF_THIMBLES).map((key, index) => {
           return (
             <div
+              onClick={() => handleThimbleClick(key)}
               key={key}
               style={{
                 zIndex: 1,
@@ -111,7 +124,7 @@ const Board = () => {
                 transform: `translate(${positions[index]}px)`
               }}
             >
-              <img style={{ width: '100%' }} src="../thimble.png" alt="thimle" />
+              <img style={{ width: '100%' }} src="../images/thimble.png" alt="thimle" />
             </div>
           );
         })}
