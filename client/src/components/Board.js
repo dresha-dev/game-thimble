@@ -65,7 +65,13 @@ const Board = () => {
   return (
     <div>
       <button onClick={startGame}>Play!!!</button>
-
+      <div
+        style={{
+          width: `${ITEM_WIDTH / 2}px`
+        }}
+      >
+        <img style={{ width: '100%' }} src="../ball.png" alt="ball" />
+      </div>
       <div>
         {getOrderedArray(NUMBER_OF_THIMBLE).map((key, index) => {
           return (
