@@ -1,14 +1,15 @@
 import React, { useState, useRef, useCallback } from 'react';
-import * as API from '../services/api';
 import { NUMBER_OF_THIMBLES, ITEM_WIDTH, DEFAULT_SPEED, BALL_WINNING_POSITION } from '../config';
-import Ball from '../components/Ball';
 import { getOrderedArray, setZerosArray } from '../utils';
+import * as API from '../services/api';
+import Ball from '../components/Ball';
 
 const Board = () => {
   const order = useRef(getOrderedArray(NUMBER_OF_THIMBLES));
   const [positions, setPosition] = useState(setZerosArray(NUMBER_OF_THIMBLES));
   const [speed] = useState(DEFAULT_SPEED);
   const [ballWinningPosition, setBallPosition] = useState(BALL_WINNING_POSITION);
+  const [isBallVisible, setBallVisibility] = useState(true);
 
   const resetGame = () => {
     order.current = getOrderedArray(NUMBER_OF_THIMBLES);
@@ -86,10 +87,22 @@ const Board = () => {
   return (
     <div>
       <button onClick={startGame}>Play!!!</button>
-      <button onClick={startGame}>Play again!!!</button>
+      <button
+        onClick={() => {
+          setBallVisibility(!isBallVisible);
+        }}
+      >
+        Play again!!!
+      </button>
 
       <div style={{ position: 'relative' }}>
-        <div>
+        <div
+          style={{
+            position: 'relative',
+            transition: `top 500ms`,
+            top: isBallVisible ? 0 : `${ITEM_WIDTH / 2 + 10}px`
+          }}
+        >
           {getOrderedArray(NUMBER_OF_THIMBLES).map((key, index) => {
             return (
               <div

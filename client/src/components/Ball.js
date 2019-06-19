@@ -5,7 +5,7 @@ const Ball = ({ position }) => (
   <div
     style={{
       position: 'absolute',
-      bottom: '10px',
+      bottom: `-${ITEM_WIDTH / 2}px`,
       left: `${position * ITEM_WIDTH}px`,
       width: `${ITEM_WIDTH / 2}px`,
       transform: 'translate(50%)',
