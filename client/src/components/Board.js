@@ -2,19 +2,45 @@ import React, { useState, useRef, useCallback } from 'react';
 import _ from 'lodash';
 import * as API from '../services/api';
 
-const NUMBER_OF_THIMBLE = 3;
+const NUMBER_OF_THIMBLES = 3;
 const ITEM_WIDTH = 100;
 const DEFAULT_SPEED = 500;
+const BALL_WINNING_POSITION = 1;
 
 const getOrderedArray = length => _.times(length, i => i);
+const setZerosArray = length => _.times(length, () => 0);
+
+const Ball = ({ position }) => (
+  <div
+    style={{
+      position: 'absolute',
+      bottom: 0,
+      left: `${position * ITEM_WIDTH}px`,
+      width: `${ITEM_WIDTH / 2}px`,
+      transform: 'translate(50%)',
+      transition: `all ${DEFAULT_SPEED}ms ease 0s`
+    }}
+  >
+    <img style={{ width: '100%' }} src="../ball.png" alt="ball" />
+  </div>
+);
 
 const Board = () => {
-  const order = useRef(getOrderedArray(NUMBER_OF_THIMBLE));
-  const [positions, setPosition] = useState(_.times(NUMBER_OF_THIMBLE, () => 0));
+  const order = useRef(getOrderedArray(NUMBER_OF_THIMBLES));
+  const [positions, setPosition] = useState(setZerosArray(NUMBER_OF_THIMBLES));
   const [speed] = useState(DEFAULT_SPEED);
+  const [ballWinningPosition, setBallPosition] = useState(BALL_WINNING_POSITION);
+
+  const resetGame = () => {
+    order.current = getOrderedArray(NUMBER_OF_THIMBLES);
+    setPosition(setZerosArray(NUMBER_OF_THIMBLES));
+    setBallPosition(BALL_WINNING_POSITION);
+  };
 
   const startGame = async () => {
     // Load data
+    resetGame();
+
     const path = await API.getPath();
 
     // LOGIC OF THE GAME
@@ -37,15 +63,20 @@ const Board = () => {
 
   const getNextPositions = useCallback((first, second) => {
     const currentOrder = order.current;
-    const getFirstItemIndex = currentOrder.indexOf(first);
-    const getLastItemIndex = currentOrder.indexOf(second);
+    const valueOfFirst = currentOrder[first];
+    const valueOfSecond = currentOrder[second];
 
-    currentOrder[getLastItemIndex] = first;
-    currentOrder[getFirstItemIndex] = second;
+    currentOrder[second] = valueOfFirst;
+    currentOrder[first] = valueOfSecond;
 
-    const positions = _.times(NUMBER_OF_THIMBLE, index => (currentOrder[index] - index) * ITEM_WIDTH);
+    const BallPosition = currentOrder.indexOf(BALL_WINNING_POSITION);
+    const positions = currentOrder.reduce((state, value, index) => {
+      state[value] = (index - value) * ITEM_WIDTH;
+      return state;
+    }, []);
 
     setPosition(positions);
+    setBallPosition(BallPosition);
   }, []);
 
   const draw = useCallback((path, callback) => {
@@ -65,29 +96,26 @@ const Board = () => {
   return (
     <div>
       <button onClick={startGame}>Play!!!</button>
-      <div
-        style={{
-          width: `${ITEM_WIDTH / 2}px`
-        }}
-      >
-        <img style={{ width: '100%' }} src="../ball.png" alt="ball" />
-      </div>
-      <div>
-        {getOrderedArray(NUMBER_OF_THIMBLE).map((key, index) => {
+
+      <div style={{ position: 'relative' }}>
+        {getOrderedArray(NUMBER_OF_THIMBLES).map((key, index) => {
           return (
             <div
               key={key}
               style={{
+                zIndex: 1,
                 display: 'inline-block',
+                position: 'relative',
                 width: `${ITEM_WIDTH}px`,
                 transition: `all ${speed}ms ease 0s`,
-                transform: `translate3d(${positions[index]}px,0,0)`
+                transform: `translate(${positions[index]}px)`
               }}
             >
               <img style={{ width: '100%' }} src="../thimble.png" alt="thimle" />
             </div>
           );
         })}
+        <Ball position={ballWinningPosition} />
       </div>
     </div>
   );
