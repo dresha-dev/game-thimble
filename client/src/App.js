@@ -1,8 +1,21 @@
-import React from 'react';
-import Board from './components/Board';
+import React from 'react'
+import { createGlobalStyle } from 'styled-components'
+import Board from './components/Board'
 
-function App() {
-  return <Board />;
-}
+const GlobalStyle = createGlobalStyle`
+  body * {
+    font-family: Helvetica;
+  }
+  img {
+    width: 100%;
+  }
+`
 
-export default App;
+const App = () => (
+  <>
+    <GlobalStyle />
+    <Board />
+  </>
+)
+
+export default App

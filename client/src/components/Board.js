@@ -1,43 +1,52 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { NUMBER_OF_THIMBLES, ITEM_WIDTH, DEFAULT_SPEED, BALL_WINNING_POSITION } from '../config';
-import { getOrderedArray, setZerosArray, delay } from '../utils';
-import * as API from '../services/api';
-import Ball from '../components/Ball';
+import React, { useState, useRef, useCallback } from 'react'
+import { NUMBER_OF_THIMBLES, ITEM_WIDTH, DEFAULT_SPEED, BALL_WINNING_POSITION } from '../config'
+import { getOrderedArray, setZerosArray, delay } from '../utils'
+import * as API from '../services/api'
+import Button from '../components/Button'
+import Thimble from '../components/Thimble'
+import Ball from '../components/Ball'
+import ThimblesHolder from '../components/ThimblesHolder'
+import Dialog from '../components/Dialog'
+import BoardWrapper from '../components/BoardWrapper'
+
+import styled from 'styled-components'
 
 const Board = () => {
-  const order = useRef(getOrderedArray(NUMBER_OF_THIMBLES)); // Thimbles order
-  const [positions, setPosition] = useState(setZerosArray(NUMBER_OF_THIMBLES)); // Thimbles css position
-  const [speed] = useState(DEFAULT_SPEED); // Game speed
-  const [ballWinningPosition, setBallPosition] = useState(BALL_WINNING_POSITION); // Ball position under container
-  const [isBallVisible, setBallVisibility] = useState(true); // Shows ball visibillity
-  const [gameResult, setGameResult] = useState(''); // Game result message
-  const [gameStatus, setGameStatus] = useState('ready'); // Game sta
+  const order = useRef(getOrderedArray(NUMBER_OF_THIMBLES)) // Thimbles order
+  const [positions, setPosition] = useState(setZerosArray(NUMBER_OF_THIMBLES)) // Thimbles css position
+  const [speed] = useState(DEFAULT_SPEED) // Game speed
+  const [ballWinningPosition, setBallPosition] = useState(BALL_WINNING_POSITION) // Ball position under container
+  const [isBallVisible, setBallVisibility] = useState(true) // Shows ball visibillity
+  const [message, setMessage] = useState(`Let's have a fun!`) // Game result message
+  const [gameStatus, setGameStatus] = useState('ready') // Game sta
 
   /**
    * Reset game to the default state
    */
   const resetGame = () => {
-    order.current = getOrderedArray(NUMBER_OF_THIMBLES);
-    setPosition(setZerosArray(NUMBER_OF_THIMBLES));
-    setBallPosition(BALL_WINNING_POSITION);
-    setGameResult('');
-  };
+    order.current = getOrderedArray(NUMBER_OF_THIMBLES)
+    setPosition(setZerosArray(NUMBER_OF_THIMBLES))
+    setBallPosition(BALL_WINNING_POSITION)
+    setMessage('')
+  }
 
   /**
    * Load and animate shuffle path
    */
   const startGame = async () => {
     if (gameStatus === 'loading') {
-      return;
+      return
     }
-    setGameStatus('loading'); // Prevent user clicks
-    resetGame(); // Reset components to starting position
-    const path = await API.getPath(); // Get path from server
-    setBallVisibility(false); // Hide ball
-    await delay(500); // Delay is needed for hiding ball before shuffle
-    await new Promise(resolve => draw(path, resolve)); // Animate shuffle
-    setGameStatus('loaded'); // Allow user choose thimble
-  };
+    setGameStatus('loading') // Prevent user clicks
+    resetGame() // Reset components to starting position
+    await delay(500)
+    setBallVisibility(false) // Hide ball
+    const path = await API.getPath() // Get path from server
+
+    await delay(500) // Delay is needed for hiding ball before shuffle
+    await new Promise(resolve => draw(path, resolve)) // Animate shuffle
+    setGameStatus('loaded') // Allow user choose thimble
+  }
 
   /**
    * Calculate thimbles and ball position
@@ -49,93 +58,76 @@ const Board = () => {
    * [0,1] |  [2,1,0]      |  [-2, 0, 2]
    */
   const getNextPositions = useCallback((first, second) => {
-    const currentOrder = order.current;
-    const valueOfFirst = currentOrder[first];
-    const valueOfSecond = currentOrder[second];
+    const currentOrder = order.current
+    const valueOfFirst = currentOrder[first]
+    const valueOfSecond = currentOrder[second]
 
-    currentOrder[second] = valueOfFirst;
-    currentOrder[first] = valueOfSecond;
+    currentOrder[second] = valueOfFirst
+    currentOrder[first] = valueOfSecond
 
-    const BallPosition = currentOrder.indexOf(BALL_WINNING_POSITION);
+    const BallPosition = currentOrder.indexOf(BALL_WINNING_POSITION)
     const positions = currentOrder.reduce((state, value, index) => {
-      state[value] = (index - value) * ITEM_WIDTH;
-      return state;
-    }, []);
+      state[value] = (index - value) * ITEM_WIDTH
+      return state
+    }, [])
 
-    setPosition(positions);
-    setBallPosition(BallPosition);
-  }, []);
+    setPosition(positions)
+    setBallPosition(BallPosition)
+  }, [])
 
   const draw = useCallback(
     (path, callback) => {
-      const [first, second] = path.shift();
+      const [first, second] = path.shift()
 
-      getNextPositions(first, second);
+      getNextPositions(first, second)
 
       if (path.length > 0) {
         setTimeout(() => {
-          draw(path, callback);
-        }, speed);
+          draw(path, callback)
+        }, speed)
       } else {
-        callback();
+        callback()
       }
     },
     [getNextPositions, speed]
-  );
+  )
 
   const handleThimbleClick = async selectedThimble => {
-    setBallVisibility(true);
-    await delay(300);
+    setBallVisibility(true)
+    await delay(300)
 
     if (selectedThimble === BALL_WINNING_POSITION) {
-      setGameResult('Awesome! 🤩');
+      setMessage('Awesome! 🤩')
     } else {
-      setGameResult('Ops! 😫');
+      setMessage('Ops! 😫')
     }
-    setGameStatus('ready');
-  };
+    setGameStatus('ready')
+  }
 
   return (
-    <div>
-      <div
-        style={{
-          position: 'relative',
-          pointerEvents: gameStatus === 'loading' || gameStatus === 'ready' ? 'none' : 'auto'
-        }}
-      >
-        <div
-          style={{
-            position: 'relative',
-            transition: `top 500ms`,
-            top: isBallVisible ? 0 : `${ITEM_WIDTH / 2 + 10}px`,
-            marginBottom: `${ITEM_WIDTH / 2 + 10}px`
-          }}
-        >
-          {getOrderedArray(NUMBER_OF_THIMBLES).map((key, index) => {
-            return (
-              <div
-                onClick={() => handleThimbleClick(key)}
-                key={key}
-                style={{
-                  zIndex: 1,
-                  display: 'inline-block',
-                  position: 'relative',
-                  width: `${ITEM_WIDTH}px`,
-                  transition: `all ${speed}ms ease 0s`,
-                  transform: `translate(${positions[index]}px)`
-                }}
-              >
-                <img style={{ width: '100%' }} src="../images/thimble.png" alt="thimle" />
-              </div>
-            );
-          })}
-        </div>
+    <>
+      <BoardWrapper preventClicks={gameStatus === 'loading' || gameStatus === 'ready'}>
+        <ThimblesHolder isBallVisible={isBallVisible} ballWidth={ITEM_WIDTH / 2 + 10}>
+          {getOrderedArray(NUMBER_OF_THIMBLES).map((key, index) => (
+            <Thimble
+              onClick={() => handleThimbleClick(key)}
+              shuffleSpeed={speed}
+              key={key}
+              translateX={positions[index]}
+              ballWidth={ITEM_WIDTH}
+            >
+              <img src="../images/thimble.png" alt="thimble" />
+            </Thimble>
+          ))}
+        </ThimblesHolder>
         <Ball position={ballWinningPosition} />
-      </div>
-      {gameResult !== '' && <div>{gameResult}</div>}
-      <button onClick={startGame}>Let's play!</button>
-    </div>
-  );
-};
+      </BoardWrapper>
+      <Button disabled={gameStatus !== 'ready'} onClick={startGame}>
+        Play!
+      </Button>
+      <Dialog>{message}</Dialog>
+    </>
+  )
+}
 
-export default Board;
+export default Board
