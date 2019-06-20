@@ -43,6 +43,12 @@ const Board = () => {
     setGameStatus('loading') // Prevent user clicks
     setBallVisibility(false) // Hide ball
     const path = await API.getPath() // Get path from server
+    if (path === null) {
+      setGameStatus('ready')
+      setMessage('Server error, please try again!')
+      return
+    }
+
     await delay(DEFAULT_SPEED) // Delay is needed for hiding ball before shuffle
     await new Promise(resolve => draw(path, resolve)) // Animate shuffle
     setGameStatus('loaded') // Allow user choose thimble

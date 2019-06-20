@@ -5,6 +5,6 @@ export const getPath = async () => {
     const response = await request.get('/api/generate-path')
     return response.data.path
   } catch (err) {
-    throw new Error(err)
+    return null
   }
 }
