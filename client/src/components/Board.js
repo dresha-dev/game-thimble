@@ -115,9 +115,11 @@ const Board = () => {
   return (
     <>
       <Dialog>{message}</Dialog>
+
       <Button disabled={gameStatus !== 'ready'} onClick={startGame}>
         Play
       </Button>
+
       <AnimationScreen thimbleSize={ITEM_WIDTH} thimbleCount={NUMBER_OF_THIMBLES}>
         <BoardWrapper preventClicks={gameStatus === 'loading' || gameStatus === 'ready'}>
           <ThimblesHolder isBallVisible={isBallVisible} ballWidth={ITEM_WIDTH / 2 + 10}>
@@ -133,6 +135,7 @@ const Board = () => {
               </Thimble>
             ))}
           </ThimblesHolder>
+
           <Ball position={ballWinningPosition} />
         </BoardWrapper>
       </AnimationScreen>
