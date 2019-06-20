@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 const BallImageWrapper = styled.div`
   position: absolute;
-  bottom: -${ITEM_WIDTH / 2}px;
+  bottom: -${ITEM_WIDTH / 2 - 10}px;
   left: ${props => props.position * ITEM_WIDTH}px;
   width: ${ITEM_WIDTH / 2}px;
   transform: translate(50%);

@@ -5,6 +5,7 @@ import Board from './components/Board'
 const GlobalStyle = createGlobalStyle`
   body * {
     font-family: Helvetica;
+    text-align: center;
   }
   img {
     width: 100%;

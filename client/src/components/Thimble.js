@@ -5,6 +5,8 @@ const Thimble = styled.div`
   width: ${props => props.ballWidth}px;
   transition: all ${props => props.shuffleSpeed}ms ease 0s;
   transform: translate(${props => props.translateX}px);
+  padding: 10px;
+  box-sizing: border-box;
 
   img {
     width: 100%;

@@ -8,26 +8,27 @@ import Ball from '../components/Ball'
 import ThimblesHolder from '../components/ThimblesHolder'
 import Dialog from '../components/Dialog'
 import BoardWrapper from '../components/BoardWrapper'
-
-import styled from 'styled-components'
+import AnimationScreen from '../components/AnimationScreen'
 
 const Board = () => {
   const order = useRef(getOrderedArray(NUMBER_OF_THIMBLES)) // Thimbles order
   const [positions, setPosition] = useState(setZerosArray(NUMBER_OF_THIMBLES)) // Thimbles css position
-  const [speed] = useState(DEFAULT_SPEED) // Game speed
+  const [speed, setSpeed] = useState(DEFAULT_SPEED) // Game speed
   const [ballWinningPosition, setBallPosition] = useState(BALL_WINNING_POSITION) // Ball position under container
   const [isBallVisible, setBallVisibility] = useState(true) // Shows ball visibillity
   const [message, setMessage] = useState(`Let's have a fun!`) // Game result message
   const [gameStatus, setGameStatus] = useState('ready') // Game sta
-
   /**
    * Reset game to the default state
    */
-  const resetGame = () => {
+  const resetGame = async () => {
+    setSpeed(0)
     order.current = getOrderedArray(NUMBER_OF_THIMBLES)
     setPosition(setZerosArray(NUMBER_OF_THIMBLES))
     setBallPosition(BALL_WINNING_POSITION)
-    setMessage('')
+    setMessage('Loading...')
+    await delay(DEFAULT_SPEED) // Delay is needed for returning ball to the default position
+    setSpeed(DEFAULT_SPEED)
   }
 
   /**
@@ -37,19 +38,19 @@ const Board = () => {
     if (gameStatus === 'loading') {
       return
     }
+
+    await resetGame() // Reset components to starting position
     setGameStatus('loading') // Prevent user clicks
-    resetGame() // Reset components to starting position
-    await delay(500)
     setBallVisibility(false) // Hide ball
     const path = await API.getPath() // Get path from server
-
-    await delay(500) // Delay is needed for hiding ball before shuffle
+    await delay(DEFAULT_SPEED) // Delay is needed for hiding ball before shuffle
     await new Promise(resolve => draw(path, resolve)) // Animate shuffle
     setGameStatus('loaded') // Allow user choose thimble
+    setMessage('Where is the ball?')
   }
 
   /**
-   * Calculate thimbles and ball position
+   * Calculate thimbles and ball positions
    * @example
    *  move |   order       |  position
    *       |  [0,1,2]      |  [ 0, 0, 0] // Default position
@@ -75,6 +76,9 @@ const Board = () => {
     setBallPosition(BallPosition)
   }, [])
 
+  /**
+   * Show animated shulle by givven path
+   */
   const draw = useCallback(
     (path, callback) => {
       const [first, second] = path.shift()
@@ -92,6 +96,10 @@ const Board = () => {
     [getNextPositions, speed]
   )
 
+  /**
+   * Handle click by clicked thimble
+   * @param {Number} selectedThimble Index of clicked thimble
+   */
   const handleThimbleClick = async selectedThimble => {
     setBallVisibility(true)
     await delay(300)
@@ -106,26 +114,28 @@ const Board = () => {
 
   return (
     <>
-      <BoardWrapper preventClicks={gameStatus === 'loading' || gameStatus === 'ready'}>
-        <ThimblesHolder isBallVisible={isBallVisible} ballWidth={ITEM_WIDTH / 2 + 10}>
-          {getOrderedArray(NUMBER_OF_THIMBLES).map((key, index) => (
-            <Thimble
-              onClick={() => handleThimbleClick(key)}
-              shuffleSpeed={speed}
-              key={key}
-              translateX={positions[index]}
-              ballWidth={ITEM_WIDTH}
-            >
-              <img src="../images/thimble.png" alt="thimble" />
-            </Thimble>
-          ))}
-        </ThimblesHolder>
-        <Ball position={ballWinningPosition} />
-      </BoardWrapper>
-      <Button disabled={gameStatus !== 'ready'} onClick={startGame}>
-        Play!
-      </Button>
       <Dialog>{message}</Dialog>
+      <Button disabled={gameStatus !== 'ready'} onClick={startGame}>
+        Play
+      </Button>
+      <AnimationScreen thimbleSize={ITEM_WIDTH} thimbleCount={NUMBER_OF_THIMBLES}>
+        <BoardWrapper preventClicks={gameStatus === 'loading' || gameStatus === 'ready'}>
+          <ThimblesHolder isBallVisible={isBallVisible} ballWidth={ITEM_WIDTH / 2 + 10}>
+            {getOrderedArray(NUMBER_OF_THIMBLES).map((key, index) => (
+              <Thimble
+                onClick={() => handleThimbleClick(key)}
+                shuffleSpeed={speed}
+                key={key}
+                translateX={positions[index]}
+                ballWidth={ITEM_WIDTH}
+              >
+                <img src="../images/thimble.png" alt="thimble" />
+              </Thimble>
+            ))}
+          </ThimblesHolder>
+          <Ball position={ballWinningPosition} />
+        </BoardWrapper>
+      </AnimationScreen>
     </>
   )
 }
