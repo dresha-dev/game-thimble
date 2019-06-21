@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "Thimble game",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "express": "^4.17.1",
+    "lodash": "^4.17.11"
+  },
   "devDependencies": {
     "eslint": "^5.3.0",
     "eslint-config-airbnb": "^17.1.0",
@@ -13,7 +16,9 @@
     "prettier": "^1.18.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app/server.js",
+    "client:dev": "cd app/client && npm run start",
+    "client:prod": "cd app/client && npm run build"
   },
   "author": "andrii.ponamarov",
   "license": "MIT"
