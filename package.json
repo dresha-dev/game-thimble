@@ -19,11 +19,7 @@
     "prettier": "^1.18.2"
   },
   "scripts": {
-    "start": "node app/server.js",
-    "client:dev": "cd app/client && npm run start",
-    "client:build": "cd app/client && npm run build",
-    "client:install": "cd app/client && npm install",
-    "build": "npm run client:install && npm run client:build"
+    "start": "node src/server.js"
   },
   "author": "andrii.ponamarov",
   "license": "MIT"
