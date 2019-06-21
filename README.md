@@ -1,7 +1,3 @@
-Setup:
+# Thimble game
 
-To application run next commands from root directory:
-
-- npm install
-- npm run build
-- npm run start
+[Demo link](https://thimble-game.herokuapp.com/)
