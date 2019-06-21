@@ -6,4 +6,8 @@ const port = process.env.PORT || 8080
 
 app.use(express.static(path.join(__dirname, 'client/build')))
 app.get('/api/generate-path', generatePath)
-app.listen(port, () => console.log(`🚀 Server listen on port: ${port}`))
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'))
+})
+
+app.listen(port, () => console.log(`Server listen on port: ${port} 🚀`))
