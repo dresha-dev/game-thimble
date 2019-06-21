@@ -1,0 +1,8 @@
+{
+  "restartable": "rs",
+  "ignore": "src/client/",
+  "watch": "src/",
+  "env": {
+    "NODE_ENV": "development"
+  }
+}

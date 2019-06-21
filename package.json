@@ -11,15 +11,21 @@
     "lodash": "^4.17.11"
   },
   "devDependencies": {
+    "concurrently": "^4.1.0",
     "eslint": "^5.3.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.17.3",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.13.0",
+    "nodemon": "^1.19.1",
     "prettier": "^1.18.2"
   },
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "dev": "concurrently --kill-others \"npm run dev:server \" \"npm run dev:client\"",
+    "dev:server": "nodemon src/server.js",
+    "dev:client": "cd src/client && npm run start",
+    "preinstall": "cd src/client && npm i"
   },
   "author": "andrii.ponamarov",
   "license": "MIT"
