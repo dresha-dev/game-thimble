@@ -9,6 +9,7 @@ import ThimblesHolder from './ThimblesHolder'
 import Dialog from './Dialog'
 import BoardWrapper from './BoardWrapper'
 import AnimationScreen from './AnimationScreen'
+import GitLink from './GitLink'
 
 const Board = () => {
   const order = useRef(getOrderedArray(NUMBER_OF_THIMBLES)) // Thimbles order
@@ -145,6 +146,8 @@ const Board = () => {
           <Ball position={ballWinningPosition} />
         </BoardWrapper>
       </AnimationScreen>
+
+      <GitLink />
     </>
   )
 }
