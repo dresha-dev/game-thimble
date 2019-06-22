@@ -7,6 +7,11 @@ const GlobalStyle = createGlobalStyle`
     font-family: Helvetica;
     text-align: center;
   }
+
+  body {
+    min-width: 320px;
+  }
+
   img {
     width: 100%;
   }

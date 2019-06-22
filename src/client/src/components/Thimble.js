@@ -4,7 +4,7 @@ const Thimble = styled.div`
   display: inline-block;
   width: ${props => props.ballWidth}px;
   transition: all ${props => props.shuffleSpeed}ms ease 0s;
-  transform: translate(${props => props.translateX}px);
+  transform: translate(${props => props.translateX}%);
   padding: 10px;
   box-sizing: border-box;
 

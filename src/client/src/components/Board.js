@@ -74,7 +74,7 @@ const Board = () => {
 
     const BallPosition = currentOrder.indexOf(BALL_WINNING_POSITION)
     const positions = currentOrder.reduce((state, value, index) => {
-      state[value] = (index - value) * ITEM_WIDTH
+      state[value] = (index - value) * 100
       return state
     }, [])
 
