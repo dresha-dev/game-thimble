@@ -1,5 +1,5 @@
 import React from 'react'
-import { ITEM_WIDTH, DEFAULT_SPEED } from '../config'
+import { ITEM_WIDTH, GAME_SPEED } from '../config'
 import styled from 'styled-components'
 
 const BallImageWrapper = styled.div`
@@ -8,7 +8,7 @@ const BallImageWrapper = styled.div`
   left: ${props => props.position * ITEM_WIDTH}px;
   width: ${ITEM_WIDTH / 2}px;
   transform: translate(50%);
-  transition: all ${DEFAULT_SPEED}ms ease 0s;
+  transition: all ${GAME_SPEED}ms ease 0s;
 `
 const Ball = ({ position }) => (
   <BallImageWrapper position={position}>

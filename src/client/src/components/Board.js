@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react'
-import { NUMBER_OF_THIMBLES, ITEM_WIDTH, DEFAULT_SPEED, BALL_WINNING_POSITION } from '../config'
+import { NUMBER_OF_THIMBLES, ITEM_WIDTH, GAME_SPEED, BALL_WINNING_POSITION } from '../config'
 import { getOrderedArray, setZerosArray, delay } from '../utils'
 import * as API from '../services/api'
 import Button from './Button'
@@ -14,7 +14,7 @@ import GitLink from './GitLink'
 const Board = () => {
   const order = useRef(getOrderedArray(NUMBER_OF_THIMBLES)) // Thimbles order
   const [positions, setPosition] = useState(setZerosArray(NUMBER_OF_THIMBLES)) // Thimbles css position
-  const [speed, setSpeed] = useState(DEFAULT_SPEED) // Game speed
+  const [speed, setSpeed] = useState(GAME_SPEED) // Game speed
   const [ballWinningPosition, setBallPosition] = useState(BALL_WINNING_POSITION) // Ball position under container
   const [isBallVisible, setBallVisibility] = useState(true) // Shows ball visibillity
   const [message, setMessage] = useState(`Let's have a fun!`) // Game result message
@@ -28,8 +28,8 @@ const Board = () => {
     setPosition(setZerosArray(NUMBER_OF_THIMBLES))
     setBallPosition(BALL_WINNING_POSITION)
     setMessage('Loading...')
-    await delay(DEFAULT_SPEED) // Delay is needed for returning ball to the default position
-    setSpeed(DEFAULT_SPEED)
+    await delay(GAME_SPEED) // Delay is needed for returning ball to the default position
+    setSpeed(GAME_SPEED)
   }
 
   /**
@@ -50,7 +50,7 @@ const Board = () => {
       return
     }
     setMessage('Shuffle...')
-    await delay(DEFAULT_SPEED) // Delay is needed for hiding ball before shuffle
+    await delay(GAME_SPEED) // Delay is needed for hiding ball before shuffle
     await new Promise(resolve => draw(path, resolve)) // Animate shuffle
     setGameStatus('loaded') // Allow user choose thimble
     setMessage('Where is the ball?')
