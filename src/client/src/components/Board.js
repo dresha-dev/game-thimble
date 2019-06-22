@@ -48,7 +48,7 @@ const Board = () => {
       setMessage('Server error, please try again!')
       return
     }
-
+    setMessage('Shuffle in the process')
     await delay(DEFAULT_SPEED) // Delay is needed for hiding ball before shuffle
     await new Promise(resolve => draw(path, resolve)) // Animate shuffle
     setGameStatus('loaded') // Allow user choose thimble
