@@ -13,7 +13,9 @@ cd game-thimble
 
 npm install
 
-npm run dev
+npm run dev:server
+
+npm run dev:client
 ```
 
 ## Overview
